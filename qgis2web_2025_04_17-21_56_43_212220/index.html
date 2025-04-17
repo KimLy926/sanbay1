@@ -1,0 +1,1276 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        </style>
+        <title>san bay</title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/tailDT.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/vitritrongsanbay_1.js"></script>
+        <script src="data/tylebando_2.js"></script>
+        <script src="data/phanloaisanbay_3.js"></script>
+        <script src="data/thuhangmaybay_4.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString' || e.target.feature.geometry.type === 'MultiLineString') {
+              highlightLayer.setStyle({
+                color: '#ffff00',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: '#ffff00',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[-111.71057228380197,-216.6979723377546],[134.60879036143706,300.38223610179995]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // add class to format popup if it contains media
+		function addClassToPopupIfMedia(content, popup) {
+			var tempDiv = document.createElement('div');
+			tempDiv.innerHTML = content;
+			if (tempDiv.querySelector('td img')) {
+				popup._contentNode.classList.add('media');
+					// Delay to force the redraw
+					setTimeout(function() {
+						popup.update();
+					}, 10);
+			} else {
+				popup._contentNode.classList.remove('media');
+			}
+		}
+        var title = new L.Control({'position':'topright'});
+        title.onAdd = function (map) {
+            this._div = L.DomUtil.create('div', 'info');
+            this.update();
+            return this._div;
+        };
+        title.update = function () {
+            this._div.innerHTML = '<h2>san bay</h2>';
+        };
+        title.addTo(map);
+        var abstract = new L.Control({'position':'bottomright'});
+        abstract.onAdd = function (map) {
+            this._div = L.DomUtil.create('div',
+            'leaflet-control abstract');
+            this._div.id = 'abstract'
+
+                abstract.show();
+                return this._div;
+            };
+            abstract.show = function () {
+                this._div.classList.remove("abstract");
+                this._div.classList.add("abstractUncollapsed");
+                this._div.innerHTML = 'đây là bản đồ thiết kế ngày 17 tháng 4 năm 2025 thông tin của các sân bay. Thực hiện bởi Nguyễn Thị Kim Ly MSSV 2228501030225';
+        };
+        abstract.addTo(map);
+        var zoomControl = L.control.zoom({
+            position: 'topleft'
+        }).addTo(map);
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.google.at/permissions/geoguidelines/attr-guide.html">Map data ©2015 Google</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        layer_GoogleSatellite_0;
+        map.addLayer(layer_GoogleSatellite_0);
+        function pop_vitritrongsanbay_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">scalerank</th>\
+                        <td>' + (feature.properties['scalerank'] !== null ? autolinker.link(String(feature.properties['scalerank']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">featurecla</th>\
+                        <td>' + (feature.properties['featurecla'] !== null ? autolinker.link(String(feature.properties['featurecla']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">type</th>\
+                        <td>' + (feature.properties['type'] !== null ? autolinker.link(String(feature.properties['type']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">name</th>\
+                        <td>' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">abbrev</th>\
+                        <td>' + (feature.properties['abbrev'] !== null ? autolinker.link(String(feature.properties['abbrev']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">location</th>\
+                        <td>' + (feature.properties['location'] !== null ? autolinker.link(String(feature.properties['location']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">gps_code</th>\
+                        <td>' + (feature.properties['gps_code'] !== null ? autolinker.link(String(feature.properties['gps_code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">iata_code</th>\
+                        <td>' + (feature.properties['iata_code'] !== null ? autolinker.link(String(feature.properties['iata_code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">wikipedia</th>\
+                        <td>' + (feature.properties['wikipedia'] !== null ? autolinker.link(String(feature.properties['wikipedia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">natlscale</th>\
+                        <td>' + (feature.properties['natlscale'] !== null ? autolinker.link(String(feature.properties['natlscale']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Type_PLMB</th>\
+                        <td>' + (feature.properties['Type_PLMB'] !== null ? autolinker.link(String(feature.properties['Type_PLMB']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VT_ S.BAY</th>\
+                        <td>' + (feature.properties['VT_ S.BAY'] !== null ? autolinker.link(String(feature.properties['VT_ S.BAY']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_vitritrongsanbay_1_0(feature) {
+            switch(String(feature.properties['VT_ S.BAY'])) {
+                case 'Bãi đậu xe':
+                    return {
+                pane: 'pane_vitritrongsanbay_1',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(15,53,223,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Bãi đỗ máy bay':
+                    return {
+                pane: 'pane_vitritrongsanbay_1',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(100,216,112,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Đường băng':
+                    return {
+                pane: 'pane_vitritrongsanbay_1',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(63,211,204,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Khu vực hàng hóa':
+                    return {
+                pane: 'pane_vitritrongsanbay_1',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(198,136,227,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Nhà ga':
+                    return {
+                pane: 'pane_vitritrongsanbay_1',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(172,208,63,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Vị trí xấp xỉ':
+                    return {
+                pane: 'pane_vitritrongsanbay_1',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(206,74,136,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_vitritrongsanbay_1');
+        map.getPane('pane_vitritrongsanbay_1').style.zIndex = 401;
+        map.getPane('pane_vitritrongsanbay_1').style['mix-blend-mode'] = 'normal';
+        var layer_vitritrongsanbay_1 = new L.geoJson(json_vitritrongsanbay_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_vitritrongsanbay_1',
+            layerName: 'layer_vitritrongsanbay_1',
+            pane: 'pane_vitritrongsanbay_1',
+            onEachFeature: pop_vitritrongsanbay_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_vitritrongsanbay_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_vitritrongsanbay_1);
+        map.addLayer(layer_vitritrongsanbay_1);
+        function pop_tylebando_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">scalerank</th>\
+                        <td>' + (feature.properties['scalerank'] !== null ? autolinker.link(String(feature.properties['scalerank']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">featurecla</th>\
+                        <td>' + (feature.properties['featurecla'] !== null ? autolinker.link(String(feature.properties['featurecla']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">type</th>\
+                        <td>' + (feature.properties['type'] !== null ? autolinker.link(String(feature.properties['type']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">name</th>\
+                        <td>' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">abbrev</th>\
+                        <td>' + (feature.properties['abbrev'] !== null ? autolinker.link(String(feature.properties['abbrev']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">location</th>\
+                        <td>' + (feature.properties['location'] !== null ? autolinker.link(String(feature.properties['location']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">gps_code</th>\
+                        <td>' + (feature.properties['gps_code'] !== null ? autolinker.link(String(feature.properties['gps_code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">iata_code</th>\
+                        <td>' + (feature.properties['iata_code'] !== null ? autolinker.link(String(feature.properties['iata_code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">wikipedia</th>\
+                        <td>' + (feature.properties['wikipedia'] !== null ? autolinker.link(String(feature.properties['wikipedia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">natlscale</th>\
+                        <td>' + (feature.properties['natlscale'] !== null ? autolinker.link(String(feature.properties['natlscale']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Type_PLMB</th>\
+                        <td>' + (feature.properties['Type_PLMB'] !== null ? autolinker.link(String(feature.properties['Type_PLMB']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VT_ S.BAY</th>\
+                        <td>' + (feature.properties['VT_ S.BAY'] !== null ? autolinker.link(String(feature.properties['VT_ S.BAY']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_tylebando_2_0(feature) {
+            switch(String(feature.properties['natlscale'])) {
+                case '8.0':
+                    return {
+                pane: 'pane_tylebando_2',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(108,207,105,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '10.0':
+                    return {
+                pane: 'pane_tylebando_2',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(137,20,204,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '15.0':
+                    return {
+                pane: 'pane_tylebando_2',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,56,62,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '20.0':
+                    return {
+                pane: 'pane_tylebando_2',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(70,78,223,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '30.0':
+                    return {
+                pane: 'pane_tylebando_2',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(88,185,224,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '50.0':
+                    return {
+                pane: 'pane_tylebando_2',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,207,69,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '75.0':
+                    return {
+                pane: 'pane_tylebando_2',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(32,228,153,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '150.0':
+                    return {
+                pane: 'pane_tylebando_2',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(208,162,82,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_tylebando_2');
+        map.getPane('pane_tylebando_2').style.zIndex = 402;
+        map.getPane('pane_tylebando_2').style['mix-blend-mode'] = 'normal';
+        var layer_tylebando_2 = new L.geoJson(json_tylebando_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_tylebando_2',
+            layerName: 'layer_tylebando_2',
+            pane: 'pane_tylebando_2',
+            onEachFeature: pop_tylebando_2,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_tylebando_2_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_tylebando_2);
+        map.addLayer(layer_tylebando_2);
+        function pop_phanloaisanbay_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">scalerank</th>\
+                        <td>' + (feature.properties['scalerank'] !== null ? autolinker.link(String(feature.properties['scalerank']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">featurecla</th>\
+                        <td>' + (feature.properties['featurecla'] !== null ? autolinker.link(String(feature.properties['featurecla']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">type</th>\
+                        <td>' + (feature.properties['type'] !== null ? autolinker.link(String(feature.properties['type']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">name</th>\
+                        <td>' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">abbrev</th>\
+                        <td>' + (feature.properties['abbrev'] !== null ? autolinker.link(String(feature.properties['abbrev']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">location</th>\
+                        <td>' + (feature.properties['location'] !== null ? autolinker.link(String(feature.properties['location']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">gps_code</th>\
+                        <td>' + (feature.properties['gps_code'] !== null ? autolinker.link(String(feature.properties['gps_code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">iata_code</th>\
+                        <td>' + (feature.properties['iata_code'] !== null ? autolinker.link(String(feature.properties['iata_code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">wikipedia</th>\
+                        <td>' + (feature.properties['wikipedia'] !== null ? autolinker.link(String(feature.properties['wikipedia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">natlscale</th>\
+                        <td>' + (feature.properties['natlscale'] !== null ? autolinker.link(String(feature.properties['natlscale']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Type_PLMB</th>\
+                        <td>' + (feature.properties['Type_PLMB'] !== null ? autolinker.link(String(feature.properties['Type_PLMB']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VT_ S.BAY</th>\
+                        <td>' + (feature.properties['VT_ S.BAY'] !== null ? autolinker.link(String(feature.properties['VT_ S.BAY']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_phanloaisanbay_3_0(feature) {
+            switch(String(feature.properties['Type_PLMB'])) {
+                case 'Cảng Không gian':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(85,229,49,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sân Bay Không xác định':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(240,72,72,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sân Bay nhỏ':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(58,225,125,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sân Bay Quân Sự':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(69,28,235,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sân Bay Quân Sự lớn':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(177,208,54,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sân Bay Quân Sự Trung bình':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(219,154,58,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sân Bay Quốc Tế lớn':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(36,201,201,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sân Bay trung bình':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(174,36,208,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'Sân Bay Trung bình và Quân Sự':
+                    return {
+                pane: 'pane_phanloaisanbay_3',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(235,28,152,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_phanloaisanbay_3');
+        map.getPane('pane_phanloaisanbay_3').style.zIndex = 403;
+        map.getPane('pane_phanloaisanbay_3').style['mix-blend-mode'] = 'normal';
+        var layer_phanloaisanbay_3 = new L.geoJson(json_phanloaisanbay_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_phanloaisanbay_3',
+            layerName: 'layer_phanloaisanbay_3',
+            pane: 'pane_phanloaisanbay_3',
+            onEachFeature: pop_phanloaisanbay_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_phanloaisanbay_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_phanloaisanbay_3);
+        map.addLayer(layer_phanloaisanbay_3);
+        function pop_thuhangmaybay_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">scalerank</th>\
+                        <td>' + (feature.properties['scalerank'] !== null ? autolinker.link(String(feature.properties['scalerank']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">featurecla</th>\
+                        <td>' + (feature.properties['featurecla'] !== null ? autolinker.link(String(feature.properties['featurecla']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">type</th>\
+                        <td>' + (feature.properties['type'] !== null ? autolinker.link(String(feature.properties['type']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">name</th>\
+                        <td>' + (feature.properties['name'] !== null ? autolinker.link(String(feature.properties['name']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">abbrev</th>\
+                        <td>' + (feature.properties['abbrev'] !== null ? autolinker.link(String(feature.properties['abbrev']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">location</th>\
+                        <td>' + (feature.properties['location'] !== null ? autolinker.link(String(feature.properties['location']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">gps_code</th>\
+                        <td>' + (feature.properties['gps_code'] !== null ? autolinker.link(String(feature.properties['gps_code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">iata_code</th>\
+                        <td>' + (feature.properties['iata_code'] !== null ? autolinker.link(String(feature.properties['iata_code']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">wikipedia</th>\
+                        <td>' + (feature.properties['wikipedia'] !== null ? autolinker.link(String(feature.properties['wikipedia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">natlscale</th>\
+                        <td>' + (feature.properties['natlscale'] !== null ? autolinker.link(String(feature.properties['natlscale']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Type_PLMB</th>\
+                        <td>' + (feature.properties['Type_PLMB'] !== null ? autolinker.link(String(feature.properties['Type_PLMB']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">VT_ S.BAY</th>\
+                        <td>' + (feature.properties['VT_ S.BAY'] !== null ? autolinker.link(String(feature.properties['VT_ S.BAY']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_thuhangmaybay_4_0(feature) {
+            switch(String(feature.properties['scalerank'])) {
+                case '2':
+                    return {
+                pane: 'pane_thuhangmaybay_4',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(221,23,66,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '3':
+                    return {
+                pane: 'pane_thuhangmaybay_4',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(144,63,236,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '4':
+                    return {
+                pane: 'pane_thuhangmaybay_4',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(235,17,206,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '5':
+                    return {
+                pane: 'pane_thuhangmaybay_4',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(198,217,55,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '6':
+                    return {
+                pane: 'pane_thuhangmaybay_4',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(223,161,111,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '7':
+                    return {
+                pane: 'pane_thuhangmaybay_4',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(128,234,99,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '8':
+                    return {
+                pane: 'pane_thuhangmaybay_4',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,143,214,1.0)',
+                interactive: true,
+            }
+                    break;
+                case '9':
+                    return {
+                pane: 'pane_thuhangmaybay_4',
+                radius: 4.8,
+                opacity: 1,
+                color: 'rgba(0,0,0,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1.0,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(38,203,228,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_thuhangmaybay_4');
+        map.getPane('pane_thuhangmaybay_4').style.zIndex = 404;
+        map.getPane('pane_thuhangmaybay_4').style['mix-blend-mode'] = 'normal';
+        var layer_thuhangmaybay_4 = new L.geoJson(json_thuhangmaybay_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_thuhangmaybay_4',
+            layerName: 'layer_thuhangmaybay_4',
+            pane: 'pane_thuhangmaybay_4',
+            onEachFeature: pop_thuhangmaybay_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_thuhangmaybay_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_thuhangmaybay_4);
+        map.addLayer(layer_thuhangmaybay_4);
+        var overlaysTree = [
+            {label: 'thuhangmaybay<br /><table><tr><td style="text-align: center;"><img src="legend/thuhangmaybay_4_20.png" /></td><td>2</td></tr><tr><td style="text-align: center;"><img src="legend/thuhangmaybay_4_31.png" /></td><td>3</td></tr><tr><td style="text-align: center;"><img src="legend/thuhangmaybay_4_42.png" /></td><td>4</td></tr><tr><td style="text-align: center;"><img src="legend/thuhangmaybay_4_53.png" /></td><td>5</td></tr><tr><td style="text-align: center;"><img src="legend/thuhangmaybay_4_64.png" /></td><td>6</td></tr><tr><td style="text-align: center;"><img src="legend/thuhangmaybay_4_75.png" /></td><td>7</td></tr><tr><td style="text-align: center;"><img src="legend/thuhangmaybay_4_86.png" /></td><td>8</td></tr><tr><td style="text-align: center;"><img src="legend/thuhangmaybay_4_97.png" /></td><td>9</td></tr></table>', layer: layer_thuhangmaybay_4},
+            {label: 'phanloaisanbay<br /><table><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_CảngKhônggian0.png" /></td><td>Cảng Không gian</td></tr><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_SânBayKhôngxácđịnh1.png" /></td><td>Sân Bay Không xác định</td></tr><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_SânBaynhỏ2.png" /></td><td>Sân Bay nhỏ</td></tr><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_SânBayQuânSự3.png" /></td><td>Sân Bay Quân Sự</td></tr><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_SânBayQuânSựlớn4.png" /></td><td>Sân Bay Quân Sự lớn</td></tr><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_SânBayQuânSựTrungbình5.png" /></td><td>Sân Bay Quân Sự Trung bình</td></tr><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_SânBayQuốcTếlớn6.png" /></td><td>Sân Bay Quốc Tế lớn</td></tr><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_SânBaytrungbình7.png" /></td><td>Sân Bay trung bình</td></tr><tr><td style="text-align: center;"><img src="legend/phanloaisanbay_3_SânBayTrungbìnhvàQuânSự8.png" /></td><td>Sân Bay Trung bình và Quân Sự</td></tr></table>', layer: layer_phanloaisanbay_3},
+            {label: 'tylebando<br /><table><tr><td style="text-align: center;"><img src="legend/tylebando_2_80000.png" /></td><td>8.000</td></tr><tr><td style="text-align: center;"><img src="legend/tylebando_2_100001.png" /></td><td>10.000</td></tr><tr><td style="text-align: center;"><img src="legend/tylebando_2_150002.png" /></td><td>15.000</td></tr><tr><td style="text-align: center;"><img src="legend/tylebando_2_200003.png" /></td><td>20.000</td></tr><tr><td style="text-align: center;"><img src="legend/tylebando_2_300004.png" /></td><td>30.000</td></tr><tr><td style="text-align: center;"><img src="legend/tylebando_2_500005.png" /></td><td>50.000</td></tr><tr><td style="text-align: center;"><img src="legend/tylebando_2_750006.png" /></td><td>75.000</td></tr><tr><td style="text-align: center;"><img src="legend/tylebando_2_1500007.png" /></td><td>150.000</td></tr></table>', layer: layer_tylebando_2},
+            {label: 'vitritrongsanbay<br /><table><tr><td style="text-align: center;"><img src="legend/vitritrongsanbay_1_Bãiđậuxe0.png" /></td><td>Bãi đậu xe</td></tr><tr><td style="text-align: center;"><img src="legend/vitritrongsanbay_1_Bãiđỗmáybay1.png" /></td><td>Bãi đỗ máy bay</td></tr><tr><td style="text-align: center;"><img src="legend/vitritrongsanbay_1_Đườngbăng2.png" /></td><td>Đường băng</td></tr><tr><td style="text-align: center;"><img src="legend/vitritrongsanbay_1_Khuvựchànghóa3.png" /></td><td>Khu vực hàng hóa</td></tr><tr><td style="text-align: center;"><img src="legend/vitritrongsanbay_1_Nhàga4.png" /></td><td>Nhà ga</td></tr><tr><td style="text-align: center;"><img src="legend/vitritrongsanbay_1_Vịtríxấpxỉ5.png" /></td><td>Vị trí xấp xỉ</td></tr></table>', layer: layer_vitritrongsanbay_1},
+            {label: "Google Satellite", layer: layer_GoogleSatellite_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: true,
+        });
+        lay.addTo(map);
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"scalerank": "int","natlscale": "real","VT_ S.BAY": "str","Type_PLMB": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                keyS = key.replace(/[^a-zA-Z0-9_]/g, "")
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + keyS).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + keyS).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_scalerank = document.createElement("div");
+            div_scalerank.id = "div_scalerank";
+            div_scalerank.className = "slider";
+            document.getElementById("menu").appendChild(div_scalerank);
+            var lab_scalerank = document.createElement('div');
+            lab_scalerank.innerHTML  = 'scalerank: <span id="val_scalerank"></span>';
+            lab_scalerank.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_scalerank);
+            var reset_scalerank = document.createElement('div');
+            reset_scalerank.innerHTML = 'clear filter';
+            reset_scalerank.className = 'filterlabel';
+            lab_scalerank.className = 'filterlabel';
+            reset_scalerank.onclick = function() {
+                sel_scalerank.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_scalerank);
+            var sel_scalerank = document.getElementById('div_scalerank');
+            noUiSlider.create(sel_scalerank, {
+                connect: true,
+                start: [2, 9],
+                step: 1,
+                format: wNumb({
+                    decimals: 0,
+                    }),
+                range: {
+                min: 2,
+                max: 9
+                }
+            });
+            sel_scalerank.noUiSlider.on('update', function (values) {
+            filterVals =[];
+            for (value in values){
+            filterVals.push(parseInt(value))
+            }
+            val_scalerank = document.getElementById('val_scalerank');
+            val_scalerank.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_natlscale = document.createElement("div");
+            div_natlscale.id = "div_natlscale";
+            div_natlscale.className = "slider";
+            document.getElementById("menu").appendChild(div_natlscale);
+            var lab_natlscale = document.createElement('div');
+            lab_natlscale.innerHTML  = 'natlscale: <span id="val_natlscale"></span>';
+            lab_natlscale.className = 'filterlabel';
+            document.getElementById("menu").appendChild(lab_natlscale);
+            var reset_natlscale = document.createElement('div');
+            reset_natlscale.innerHTML = 'clear filter';
+            reset_natlscale.className = 'filterlabel';
+            lab_natlscale.className = 'filterlabel';
+            reset_natlscale.onclick = function() {
+                sel_natlscale.noUiSlider.reset();
+            };
+            document.getElementById("menu").appendChild(reset_natlscale);
+            var sel_natlscale = document.getElementById('div_natlscale');
+            noUiSlider.create(sel_natlscale, {
+                connect: true,
+                start: [8.0, 150.0],
+                range: {
+                min: 8.0,
+                max: 150.0
+                }
+            });
+            sel_natlscale.noUiSlider.on('update', function (values) {
+            val_natlscale = document.getElementById('val_natlscale');
+            val_natlscale.innerHTML = values.join(' - ');
+                filterFunc()
+            });
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_VT_SBAY = document.createElement('div');
+            div_VT_SBAY.id = "div_VT_SBAY";
+            div_VT_SBAY.className= "filterselect";
+            document.getElementById("menu").appendChild(div_VT_SBAY);
+            sel_VT_SBAY = document.createElement('select');
+            sel_VT_SBAY.multiple = true;
+            sel_VT_SBAY.size = 6;
+            sel_VT_SBAY.id = "sel_VT_SBAY";
+            var VT_SBAY_options_str = "<option value='' unselected></option>";
+            sel_VT_SBAY.onchange = function(){filterFunc()};
+            VT_SBAY_options_str  += '<option value="Bãi đậu xe">Bãi đậu xe</option>';
+            VT_SBAY_options_str  += '<option value="Bãi đỗ máy bay">Bãi đỗ máy bay</option>';
+            VT_SBAY_options_str  += '<option value="Khu vực hàng hóa">Khu vực hàng hóa</option>';
+            VT_SBAY_options_str  += '<option value="Nhà ga">Nhà ga</option>';
+            VT_SBAY_options_str  += '<option value="Vị trí xấp xỉ">Vị trí xấp xỉ</option>';
+            VT_SBAY_options_str  += '<option value="Đường băng">Đường băng</option>';
+            sel_VT_SBAY.innerHTML = VT_SBAY_options_str;
+            div_VT_SBAY.appendChild(sel_VT_SBAY);
+            var lab_VT_SBAY = document.createElement('div');
+            lab_VT_SBAY.innerHTML = 'VT_ S.BAY';
+            lab_VT_SBAY.className = 'filterlabel';
+            div_VT_SBAY.appendChild(lab_VT_SBAY);
+            var reset_VT_SBAY = document.createElement('div');
+            reset_VT_SBAY.innerHTML = 'clear filter';
+            reset_VT_SBAY.className = 'filterlabel';
+            reset_VT_SBAY.onclick = function() {
+                var options = document.getElementById("sel_VT_SBAY").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_VT_SBAY.appendChild(reset_VT_SBAY);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_Type_PLMB = document.createElement('div');
+            div_Type_PLMB.id = "div_Type_PLMB";
+            div_Type_PLMB.className= "filterselect";
+            document.getElementById("menu").appendChild(div_Type_PLMB);
+            sel_Type_PLMB = document.createElement('select');
+            sel_Type_PLMB.multiple = true;
+            sel_Type_PLMB.size = 9;
+            sel_Type_PLMB.id = "sel_Type_PLMB";
+            var Type_PLMB_options_str = "<option value='' unselected></option>";
+            sel_Type_PLMB.onchange = function(){filterFunc()};
+            Type_PLMB_options_str  += '<option value="Cảng Không gian">Cảng Không gian</option>';
+            Type_PLMB_options_str  += '<option value="Sân Bay Không xác định">Sân Bay Không xác định</option>';
+            Type_PLMB_options_str  += '<option value="Sân Bay Quân Sự">Sân Bay Quân Sự</option>';
+            Type_PLMB_options_str  += '<option value="Sân Bay Quân Sự Trung bình">Sân Bay Quân Sự Trung bình</option>';
+            Type_PLMB_options_str  += '<option value="Sân Bay Quân Sự lớn">Sân Bay Quân Sự lớn</option>';
+            Type_PLMB_options_str  += '<option value="Sân Bay Quốc Tế lớn">Sân Bay Quốc Tế lớn</option>';
+            Type_PLMB_options_str  += '<option value="Sân Bay Trung bình và Quân Sự">Sân Bay Trung bình và Quân Sự</option>';
+            Type_PLMB_options_str  += '<option value="Sân Bay nhỏ">Sân Bay nhỏ</option>';
+            Type_PLMB_options_str  += '<option value="Sân Bay trung bình">Sân Bay trung bình</option>';
+            sel_Type_PLMB.innerHTML = Type_PLMB_options_str;
+            div_Type_PLMB.appendChild(sel_Type_PLMB);
+            var lab_Type_PLMB = document.createElement('div');
+            lab_Type_PLMB.innerHTML = 'Type_PLMB';
+            lab_Type_PLMB.className = 'filterlabel';
+            div_Type_PLMB.appendChild(lab_Type_PLMB);
+            var reset_Type_PLMB = document.createElement('div');
+            reset_Type_PLMB.innerHTML = 'clear filter';
+            reset_Type_PLMB.className = 'filterlabel';
+            reset_Type_PLMB.onclick = function() {
+                var options = document.getElementById("sel_Type_PLMB").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_Type_PLMB.appendChild(reset_Type_PLMB);
+        </script>
+    </body>
+</html>
